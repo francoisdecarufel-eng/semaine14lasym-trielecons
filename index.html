@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Symétrie, les Frises et les Dallages</title>
+    
+    <!-- Tailwind CSS pour le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel pour compiler JSX dans le navigateur -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; background-color: #f0fdf4; }
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-btn.active { background-color: #4ade80; color: white; transform: scale(1.05); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .grid-cell { transition: background-color 0.2s; }
+        /* Animation pour la démonstration */
+        @keyframes fade-in-right {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-reveal { animation: fade-in-right 1s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- COMPOSANTS DE NAVIGATION ---
+        const Tabs = ({ activeTab, setActiveTab }) => {
+            const tabs = [
+                { id: 'theory', label: '📖 La symétrie, c\'est quoi ?' },
+                { id: 'demo', label: '👀 Démonstration' },
+                { id: 'practice', label: '🧠 Pratique (Quiz)' },
+                { id: 'exercise', label: '🎨 Je m\'exerce' }
+            ];
+
+            return (
+                <div className="flex flex-wrap justify-center gap-4 p-4 bg-green-100 shadow-md rounded-b-2xl mb-8">
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`tab-btn px-6 py-3 rounded-xl font-bold text-lg border-4 border-transparent hover:border-green-400 ${activeTab === tab.id ? 'active' : 'bg-white text-green-700'}`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- ONGLET 1 : THÉORIE ---
+        const TheoryTab = () => (
+            <div className="max-w-4xl mx-auto p-6 bg-white rounded-3xl shadow-xl space-y-8 animate-[fade-in-right_0.5s_ease-out]">
+                <h1 className="text-4xl font-extrabold text-center text-green-600 mb-8">Découvrons la Symétrie et plus encore ! 🚀</h1>
+                
+                {/* Axe de symétrie */}
+                <div className="bg-blue-50 p-6 rounded-2xl border-l-8 border-blue-400">
+                    <h2 className="text-3xl font-bold text-blue-600 flex items-center gap-2 mb-4">
+                        <span>✂️</span> L'Axe de symétrie
+                    </h2>
+                    <p className="text-xl leading-relaxed text-gray-700 mb-4">
+                        C'est une ligne magique (droite) qui partage une figure en <strong>deux parties parfaitement identiques</strong> (congrues) et superposables. Si on plie la figure le long de cette ligne, les deux côtés se recouvrent exactement !
+                    </p>
+                    <div className="flex justify-center my-6 relative w-64 mx-auto">
+                        <svg viewBox="0 0 100 100" className="w-48 h-48 drop-shadow-lg">
+                            {/* Antennes */}
+                            <path d="M 50 15 Q 40 5 35 10" fill="none" stroke="#1E3A8A" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M 50 15 Q 60 5 65 10" fill="none" stroke="#1E3A8A" strokeWidth="2" strokeLinecap="round" />
+                            
+                            {/* Aile gauche du papillon */}
+                            <path d="M 48 20 C 10 0, -5 45, 40 55 C 5 65, 10 95, 48 85 Z" fill="#93C5FD" stroke="#2563EB" strokeWidth="2" />
+                            {/* Aile droite du papillon */}
+                            <path d="M 52 20 C 90 0, 105 45, 60 55 C 95 65, 90 95, 52 85 Z" fill="#93C5FD" stroke="#2563EB" strokeWidth="2" />
+                            
+                            {/* Motifs symétriques sur les ailes */}
+                            <circle cx="25" cy="35" r="5" fill="#1E40AF" />
+                            <circle cx="75" cy="35" r="5" fill="#1E40AF" />
+                            <circle cx="30" cy="70" r="4" fill="#1E40AF" />
+                            <circle cx="70" cy="70" r="4" fill="#1E40AF" />
+
+                            {/* Corps du papillon */}
+                            <rect x="46" y="15" width="8" height="70" rx="4" fill="#1E3A8A" />
+
+                            {/* Axe de symétrie rouge */}
+                            <line x1="50" y1="0" x2="50" y2="100" stroke="#ef4444" strokeWidth="4" strokeDasharray="4 4" />
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Frise */}
+                <div className="bg-yellow-50 p-6 rounded-2xl border-l-8 border-yellow-400">
+                    <h2 className="text-3xl font-bold text-yellow-600 flex items-center gap-2 mb-4">
+                        <span>🚂</span> La Frise
+                    </h2>
+                    <p className="text-xl leading-relaxed text-gray-700 mb-4">
+                        C'est une bande décorative où un motif se <strong>répète régulièrement</strong> (comme des tampons alignés). On utilise la réflexion (symétrie) pour créer ces motifs.
+                    </p>
+                    <div className="flex justify-center text-4xl gap-2 bg-white p-4 rounded-xl shadow-inner overflow-hidden">
+                        🍎 🍌 🍎 🍌 🍎 🍌 🍎 🍌
+                    </div>
+                </div>
+
+                {/* Dallage */}
+                <div className="bg-purple-50 p-6 rounded-2xl border-l-8 border-purple-400">
+                    <h2 className="text-3xl font-bold text-purple-600 flex items-center gap-2 mb-4">
+                        <span>🧩</span> Le Dallage
+                    </h2>
+                    <p className="text-xl leading-relaxed text-gray-700 mb-4">
+                        C'est comme un casse-tête géant ! On recouvre une surface avec des figures géométriques qui s'assemblent <strong>sans aucun trou ni chevauchement</strong> (comme le plancher de la classe).
+                    </p>
+                    <div className="grid grid-cols-4 gap-0 w-48 mx-auto border-4 border-gray-800">
+                        <div className="w-12 h-12 bg-red-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-yellow-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-red-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-yellow-400 border border-black"></div>
+                        
+                        <div className="w-12 h-12 bg-yellow-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-red-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-yellow-400 border border-black"></div>
+                        <div className="w-12 h-12 bg-red-400 border border-black"></div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // --- ONGLET 2 : QUIZ PRATIQUE ---
+        const QuizTab = () => {
+            const questions = [
+                {
+                    q: "Qu'est-ce qu'un axe de symétrie ?",
+                    options: [
+                        "Une ligne qui entoure une forme.",
+                        "Une ligne droite qui coupe une forme en deux parties identiques.",
+                        "Un point situé au centre d'un cercle."
+                    ],
+                    answer: 1
+                },
+                {
+                    q: "Parmi ces suites, laquelle ressemble le plus à une frise ?",
+                    options: [
+                        "⭐ 🔵 🟩 🔺",
+                        "⭐ ⭐ ⭐ ⭐",
+                        "🔵 🔺 🔵 🔺 🔵 🔺"
+                    ],
+                    answer: 2
+                },
+                {
+                    q: "Quelle est la règle d'or d'un dallage ?",
+                    options: [
+                        "Il ne doit y avoir aucun espace vide ni chevauchement.",
+                        "Il doit être composé uniquement de ronds.",
+                        "Les formes doivent toutes être de la même couleur."
+                    ],
+                    answer: 0
+                },
+                {
+                    q: "Si je plie une feuille sur son axe de symétrie pour un dessin, que se passe-t-il ?",
+                    options: [
+                        "Les deux moitiés du dessin se superposent exactement.",
+                        "Le dessin devient plus grand.",
+                        "Le dessin disparaît."
+                    ],
+                    answer: 0
+                },
+                {
+                    q: "Peut-il y avoir plusieurs axes de symétrie dans une seule forme (ex: un carré) ?",
+                    options: [
+                        "Non, un seul est possible.",
+                        "Oui, un carré a plusieurs axes de symétrie.",
+                        "Seulement s'il est de couleur rouge."
+                    ],
+                    answer: 1
+                }
+            ];
+
+            const [currentQ, setCurrentQ] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showFeedback, setShowFeedback] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(false);
+            const [finished, setFinished] = useState(false);
+
+            const handleAnswer = (index) => {
+                const correct = index === questions[currentQ].answer;
+                setIsCorrect(correct);
+                setShowFeedback(true);
+                if (correct) setScore(score + 1);
+            };
+
+            const nextQuestion = () => {
+                setShowFeedback(false);
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                } else {
+                    setFinished(true);
+                }
+            };
+
+            const restart = () => {
+                setCurrentQ(0);
+                setScore(0);
+                setFinished(false);
+                setShowFeedback(false);
+            };
+
+            if (finished) {
+                return (
+                    <div className="max-w-2xl mx-auto text-center p-8 bg-white rounded-3xl shadow-xl mt-12">
+                        <h2 className="text-4xl font-bold mb-4">Quiz terminé ! 🎉</h2>
+                        <p className="text-2xl mb-8">Ton score : {score} / {questions.length}</p>
+                        {score === questions.length ? (
+                            <p className="text-xl text-green-600 font-bold mb-8">Parfait ! Tu es un expert de la géométrie ! 🏆</p>
+                        ) : (
+                            <p className="text-xl text-blue-600 mb-8">Bon effort ! N'hésite pas à relire la théorie et réessayer ! 💪</p>
+                        )}
+                        <button onClick={restart} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg transition-transform hover:scale-105">
+                            Recommencer le Quiz
+                        </button>
+                    </div>
+                );
+            }
+
+            const q = questions[currentQ];
+
+            return (
+                <div className="max-w-3xl mx-auto p-6 bg-white rounded-3xl shadow-xl mt-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-500">Question {currentQ + 1} / {questions.length}</h2>
+                        <span className="text-xl font-bold bg-yellow-200 px-4 py-2 rounded-full">Score: {score} ⭐️</span>
+                    </div>
+                    
+                    <h3 className="text-3xl font-bold text-gray-800 mb-8">{q.q}</h3>
+                    
+                    {!showFeedback ? (
+                        <div className="space-y-4">
+                            {q.options.map((opt, i) => (
+                                <button 
+                                    key={i} 
+                                    onClick={() => handleAnswer(i)}
+                                    className="w-full text-left p-6 text-xl bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl font-medium transition-all hover:scale-[1.02]"
+                                >
+                                    {opt}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className={`p-8 rounded-2xl text-center ${isCorrect ? 'bg-green-100 border-4 border-green-400' : 'bg-red-100 border-4 border-red-400'}`}>
+                            <h4 className="text-4xl mb-4 font-bold">
+                                {isCorrect ? '✅ Bonne réponse !' : '❌ Oups, pas tout à fait...'}
+                            </h4>
+                            <p className="text-2xl mb-8">
+                                {isCorrect ? 'Excellent travail, continue !' : 'Essaie de te rappeler de la définition exacte.'}
+                            </p>
+                            <button onClick={nextQuestion} className="bg-gray-800 hover:bg-black text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg">
+                                {currentQ < questions.length - 1 ? 'Question Suivante ➡️' : 'Voir mon résultat 🏁'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- ONGLET 3 : DÉMONSTRATION PAS À PAS ---
+        const DemoTab = () => {
+            const [step, setStep] = useState(1);
+            
+            const renderStepContent = () => {
+                switch(step) {
+                    case 1:
+                        return (
+                            <div>
+                                <p className="text-2xl text-center mb-8 font-bold">1. Voici la moitié d'un visage heureux.</p>
+                                <div className="flex justify-center h-64">
+                                    <div className="w-32 h-64 bg-yellow-400 rounded-l-full relative border-8 border-r-0 border-yellow-600 overflow-hidden">
+                                        <div className="absolute top-16 right-4 w-8 h-12 bg-black rounded-full"></div>
+                                        <div className="absolute bottom-16 right-0 w-16 h-8 border-b-8 border-black rounded-bl-full"></div>
+                                    </div>
+                                    <div className="w-32 h-64 border-l-4 border-dashed border-transparent"></div>
+                                </div>
+                            </div>
+                        );
+                    case 2:
+                        return (
+                            <div>
+                                <p className="text-2xl text-center mb-8 font-bold text-red-600">2. On trace un axe de symétrie (la ligne pointillée rouge).</p>
+                                <div className="flex justify-center h-64">
+                                    <div className="w-32 h-64 bg-yellow-400 rounded-l-full relative border-8 border-r-0 border-yellow-600 overflow-hidden">
+                                        <div className="absolute top-16 right-4 w-8 h-12 bg-black rounded-full"></div>
+                                        <div className="absolute bottom-16 right-0 w-16 h-8 border-b-8 border-black rounded-bl-full"></div>
+                                    </div>
+                                    <div className="w-2 h-64 bg-red-500 z-10" style={{border: '4px dashed white'}}></div>
+                                    <div className="w-32 h-64"></div>
+                                </div>
+                            </div>
+                        );
+                    case 3:
+                        return (
+                            <div>
+                                <p className="text-2xl text-center mb-8 font-bold text-green-600">3. Abracadabra ! L'autre côté est le reflet parfait !</p>
+                                <div className="flex justify-center h-64">
+                                    <div className="w-32 h-64 bg-yellow-400 rounded-l-full relative border-8 border-r-0 border-yellow-600 overflow-hidden">
+                                        <div className="absolute top-16 right-4 w-8 h-12 bg-black rounded-full"></div>
+                                        <div className="absolute bottom-16 right-0 w-16 h-8 border-b-8 border-black rounded-bl-full"></div>
+                                    </div>
+                                    <div className="w-2 h-64 bg-red-500 z-10" style={{border: '4px dashed white'}}></div>
+                                    <div className="w-32 h-64 bg-yellow-400 rounded-r-full relative border-8 border-l-0 border-yellow-600 overflow-hidden animate-reveal">
+                                        <div className="absolute top-16 left-4 w-8 h-12 bg-black rounded-full"></div>
+                                        <div className="absolute bottom-16 left-0 w-16 h-8 border-b-8 border-black rounded-br-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                }
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-xl">
+                    <h2 className="text-4xl font-extrabold text-center text-purple-600 mb-8">La Magie de la Symétrie ✨</h2>
+                    
+                    <div className="bg-gray-50 p-8 rounded-2xl min-h-[400px] flex flex-col justify-center border-4 border-purple-100">
+                        {renderStepContent()}
+                    </div>
+
+                    <div className="flex justify-center gap-6 mt-8">
+                        <button 
+                            onClick={() => setStep(Math.max(1, step - 1))}
+                            disabled={step === 1}
+                            className={`px-8 py-4 rounded-xl text-xl font-bold shadow-md ${step === 1 ? 'bg-gray-300 text-gray-500' : 'bg-purple-200 hover:bg-purple-300 text-purple-800'}`}
+                        >
+                            ⬅️ Précédent
+                        </button>
+                        <button 
+                            onClick={() => setStep(Math.min(3, step + 1))}
+                            disabled={step === 3}
+                            className={`px-8 py-4 rounded-xl text-xl font-bold shadow-md ${step === 3 ? 'bg-gray-300 text-gray-500' : 'bg-purple-500 hover:bg-purple-600 text-white'}`}
+                        >
+                            Suivant ➡️
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- ONGLET 4 : EXERCICE INTERACTIF (GRILLE) ---
+        const ExerciseTab = () => {
+            const size = 6; // Grille 6x6
+            const [grid, setGrid] = useState([]);
+            const [message, setMessage] = useState({ text: 'Clique sur les cases de droite pour reproduire le reflet !', type: 'info' });
+
+            // Générer un modèle aléatoire sur la moitié gauche (colonnes 0,1,2)
+            const initGrid = () => {
+                const newGrid = Array(size).fill().map(() => Array(size).fill(false));
+                for(let r = 0; r < size; r++) {
+                    for(let c = 0; c < size/2; c++) {
+                        // 40% de chance d'avoir une case colorée
+                        newGrid[r][c] = Math.random() > 0.6;
+                    }
+                }
+                setGrid(newGrid);
+                setMessage({ text: 'Clique sur les cases de droite pour reproduire le reflet !', type: 'info' });
+            };
+
+            // Initialiser au chargement
+            useEffect(() => {
+                initGrid();
+            }, []);
+
+            const toggleCell = (r, c) => {
+                // On ne permet de cliquer que sur la moitié droite
+                if (c < size/2) return;
+
+                const newGrid = [...grid];
+                newGrid[r][c] = !newGrid[r][c];
+                setGrid(newGrid);
+                setMessage({ text: 'Continue ! Clique sur "Vérifier" quand tu as terminé.', type: 'info' });
+            };
+
+            const checkSymmetry = () => {
+                let isSymmetric = true;
+                for(let r = 0; r < size; r++) {
+                    for(let c = 0; c < size/2; c++) {
+                        const leftCell = grid[r][c];
+                        const rightCell = grid[r][size - 1 - c];
+                        if (leftCell !== rightCell) {
+                            isSymmetric = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (isSymmetric) {
+                    setMessage({ text: '✅ Bravo ! La symétrie est parfaite !', type: 'success' });
+                } else {
+                    setMessage({ text: '❌ Oups ! Il y a des erreurs. Vérifie bien l\'effet miroir.', type: 'error' });
+                }
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto p-6 bg-white rounded-3xl shadow-xl text-center">
+                    <h2 className="text-3xl font-extrabold text-orange-600 mb-4">À toi de jouer au tableau ! 🖍️</h2>
+                    
+                    <div className={`p-4 mb-6 rounded-xl text-xl font-bold border-2 ${
+                        message.type === 'success' ? 'bg-green-100 text-green-700 border-green-400' :
+                        message.type === 'error' ? 'bg-red-100 text-red-700 border-red-400' :
+                        'bg-blue-100 text-blue-700 border-blue-400'
+                    }`}>
+                        {message.text}
+                    </div>
+
+                    <div className="flex justify-center mb-8 relative">
+                        {/* La Grille */}
+                        <div className="inline-grid bg-gray-300 gap-1 border-8 border-gray-700 rounded-lg p-1" 
+                             style={{gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`}}>
+                            {grid.map((row, r) => (
+                                row.map((cell, c) => (
+                                    <div 
+                                        key={`${r}-${c}`}
+                                        onClick={() => toggleCell(r, c)}
+                                        className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center cursor-pointer grid-cell rounded-sm
+                                            ${cell ? (c < size/2 ? 'bg-orange-500' : 'bg-orange-400') : 'bg-white'} 
+                                            ${c < size/2 ? 'opacity-90' : 'hover:bg-gray-100'}
+                                        `}
+                                    >
+                                        {/* Ne montrer un cadenas que pour la partie gauche (fixe) si on veut, mais visuellement la ligne suffit */}
+                                    </div>
+                                ))
+                            ))}
+                        </div>
+                        {/* L'axe central dessiné par dessus */}
+                        <div className="absolute top-0 bottom-0 w-2 bg-red-600 z-10 pointer-events-none" style={{ left: '50%', transform: 'translateX(-50%)', border: '2px dashed white' }}></div>
+                    </div>
+
+                    <div className="flex justify-center gap-6">
+                        <button 
+                            onClick={checkSymmetry}
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full text-2xl shadow-lg transition-transform hover:scale-105"
+                        >
+                            Vérifier mon travail ✔️
+                        </button>
+                        <button 
+                            onClick={initGrid}
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 px-8 rounded-full text-2xl shadow-lg"
+                        >
+                            🔄 Nouveau défi
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- COMPOSANT PRINCIPAL ---
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('theory');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'theory': return <TheoryTab />;
+                    case 'demo': return <DemoTab />;
+                    case 'practice': return <QuizTab />;
+                    case 'exercise': return <ExerciseTab />;
+                    default: return <TheoryTab />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col pb-12">
+                    <header className="bg-green-600 text-white p-6 shadow-lg text-center">
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-wide">
+                            🎨 Symétrie, Frises & Dallages 🧩
+                        </h1>
+                        <p className="mt-2 text-xl opacity-90">Mathématiques - 2e Cycle du Primaire</p>
+                    </header>
+
+                    <main className="flex-grow px-4">
+                        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+                        {renderContent()}
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
